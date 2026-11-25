@@ -35,6 +35,8 @@ if (empty($id)) {
         $alertError = 'Erreur lors de la récupération de la catégorie : ' . $e->getMessage();
       }
     }
+
+    $movie_poster = $movie['poster'] ? 'public/picture/' . $movie['poster'] : 'public/default_poster.jpg';
   } catch (PDOException $e) {
     $alertError = 'Erreur lors de la récupération du film : ' . $e->getMessage();
   }
@@ -46,7 +48,7 @@ if (empty($id)) {
   <h1>Détails du film</h1>
   <?php if ($movie) { ?>
     <div class="card" style="width: 18rem;">
-      <img class="card-img-top" src="public/picture/<?= htmlspecialchars($movie["poster"]) ?>" alt="Image du film
+      <img class="card-img-top" src="<?= htmlspecialchars($movie_poster) ?>" alt="Image du film
       <?= htmlspecialchars($movie['title']) ?>" />
       <div class="card-body">
         <h5 class="card-title">

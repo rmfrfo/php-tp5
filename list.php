@@ -28,7 +28,8 @@ require_once 'alert.php';
   <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
     <?php foreach ($movies as $movie) { ?>
       <div class="card" style="width: 18rem;">
-        <img class="card-img-top" src="public/picture/<?= htmlspecialchars($movie["poster"]) ?>"
+        <img class="card-img-top"
+          src="<?= htmlspecialchars($movie['poster'] ? 'public/picture/' . $movie['poster'] : 'public/default_poster.jpg') ?>"
           alt="Image du film <?= htmlspecialchars($movie['title']) ?>" />
         <div class="card-body">
           <h5 class="card-title"><?= $movie["title"] ?></h5>
