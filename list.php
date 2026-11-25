@@ -34,7 +34,7 @@ require_once 'alert.php';
         <div class="card-body">
           <h5 class="card-title"><?= $movie["title"] ?></h5>
           <p class="card-text"><?= $movie["summary"] ?></p>
-          <a href="detail.php?id=<?= $movie["id"] ?>" class="btn btn-primary">Voir les détails</a>
+          <a href="details.php?id=<?= $movie["id"] ?>" class="btn btn-primary">Voir les détails</a>
         </div>
       </div>
 
