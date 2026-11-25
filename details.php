@@ -46,21 +46,22 @@ if (empty($id)) {
   <h1>Détails du film</h1>
   <?php if ($movie) { ?>
     <div class="card" style="width: 18rem;">
-      <img class="card-img-top" src="public/picture/<?= $movie["poster"] ?>" alt="Image du film
-      <?= $movie['title'] ?>" />
+      <img class="card-img-top" src="public/picture/<?= htmlspecialchars($movie["poster"]) ?>" alt="Image du film
+      <?= htmlspecialchars($movie['title']) ?>" />
       <div class="card-body">
         <h5 class="card-title">
-          <?= $movie["title"] ?>
+          <?= htmlspecialchars($movie["title"]) ?>
         </h5>
         <div class="card-text">
-          <strong>Date de sortie :</strong> <?= $movie["release_date"] ?><br />
-          <strong>Durée :</strong> <?= $movie["duration"] ?><br />
-          <strong>Catégorie :</strong> <?= $category["name"] ?><br />
+          <strong>Date de sortie :</strong> <?= htmlspecialchars($movie["release_date"]) ?><br />
+          <strong>Durée :</strong> <?= htmlspecialchars($movie["duration"]) ?><br />
+          <strong>Catégorie :</strong> <?= htmlspecialchars($category["name"]) ?><br />
         </div>
         <p class="card-text">
-          <?= $movie["summary"] ?>
+          <?= htmlspecialchars($movie["summary"]) ?>
         </p>
-        <a href="<?= $movie["trailer"] ?>" class="btn btn-primary" target="_blank">Regarder la bande annonce</a>
+        <a href="<?= htmlspecialchars($movie["trailer"]) ?>" class="btn btn-primary" target="_blank">Regarder la bande
+          annonce</a>
       </div>
     <?php } ?>
 </main>
