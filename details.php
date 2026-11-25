@@ -62,6 +62,17 @@ if (empty($id)) {
         <p class="card-text">
           <?= htmlspecialchars($movie["summary"]) ?>
         </p>
+        <hr />
+        <p class="card-text">
+          Vu :
+          <?= htmlspecialchars($movie["is_watched"] ? 'Oui' : 'Non') ?>
+        </p>
+        <p class="card-text">
+          <?php for ($i = 1; $i <= 5; $i++) { ?>
+            <?= $i <= $movie["rank"] ? '<i class="bi bi-star-fill"></i>' : '<i class="bi bi-star"></i>' ?>
+          <?php } ?>
+          <span>/5</span>
+        </p>
         <a href="<?= htmlspecialchars($movie["trailer"]) ?>" class="btn btn-primary" target="_blank">Regarder la bande
           annonce</a>
       </div>
