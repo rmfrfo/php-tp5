@@ -13,26 +13,32 @@ if (empty($id)) {
   exit;
 } else {
 
-  $request = $db->prepare('SELECT * FROM movie WHERE id = ?');
-  $request->execute([$id]);
-  $movie = $request->fetch();
+  try {
+    $request = $db->prepare('SELECT * FROM movie WHERE id = ?');
+    $request->execute([$id]);
+    $movie = $request->fetch();
 
-  if (!$movie) {
-    $alertError = 'Ce film n\'existe pas.';
-  } else {
+    if (!$movie) {
+      $alertError = 'Ce film n\'existe pas.';
+    } else {
 
-    // Récupérer la catégorie du film
-    $request = $db->prepare('SELECT * FROM category WHERE id = ?');
-    $request->execute([$movie['category']]);
-    $category = $request->fetch();
+      // Récupérer la catégorie du film
+      try {
+        $request = $db->prepare('SELECT * FROM category WHERE id = ?');
+        $request->execute([$movie['category']]);
+        $category = $request->fetch();
 
-    if (!$category) {
-      $alertError = 'La catégorie de ce film n\'existe pas.';
+        if (!$category) {
+          $alertError = 'La catégorie de ce film n\'existe pas.';
+        }
+      } catch (PDOException $e) {
+        $alertError = 'Erreur lors de la récupération de la catégorie : ' . $e->getMessage();
+      }
     }
+  } catch (PDOException $e) {
+    $alertError = 'Erreur lors de la récupération du film : ' . $e->getMessage();
   }
-
   require_once 'alert.php';
-
 }
 
 ?>
