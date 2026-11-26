@@ -37,6 +37,11 @@ if (empty($id)) {
     }
 
     $movie_poster = $movie['poster'] ? 'public/picture/' . $movie['poster'] : 'public/default_poster.jpg';
+
+
+    $movie_trailer_id = preg_match('~(?:youtu\.be/|youtube?\.com/(?:watch\?v=|embed/|v/|shorts/))([A-Za-z0-9_-]{11})~', $movie['trailer'], $matches)
+      ? $matches[1]
+      : '';
   } catch (PDOException $e) {
     $alertError = 'Erreur lors de la récupération du film : ' . $e->getMessage();
   }
@@ -47,34 +52,42 @@ if (empty($id)) {
 <main class="container">
   <h1>Détails du film</h1>
   <?php if ($movie) { ?>
-    <div class="card" style="width: 18rem;">
-      <img class="card-img-top" src="<?= htmlspecialchars($movie_poster) ?>" alt="Image du film
+    <div class="d-flex flex-wrap justify-content-around">
+      <div class="card flex-grow-1 flex-fill" style="width: 18rem;">
+        <img class="card-img-top" src="<?= htmlspecialchars($movie_poster) ?>" alt="Image du film
       <?= htmlspecialchars($movie['title']) ?>" />
-      <div class="card-body">
-        <h5 class="card-title">
-          <?= htmlspecialchars($movie["title"]) ?>
-        </h5>
-        <div class="card-text">
-          <strong>Date de sortie :</strong> <?= htmlspecialchars($movie["release_date"]) ?><br />
-          <strong>Durée :</strong> <?= htmlspecialchars($movie["duration"]) ?><br />
-          <strong>Catégorie :</strong> <?= htmlspecialchars($category["name"]) ?><br />
+        <div class="card-body">
+          <h5 class="card-title">
+            <?= htmlspecialchars($movie["title"]) ?>
+          </h5>
+          <div class="card-text">
+            <strong>Date de sortie :</strong> <?= htmlspecialchars($movie["release_date"]) ?><br />
+            <strong>Durée :</strong> <?= htmlspecialchars($movie["duration"]) ?><br />
+            <strong>Catégorie :</strong> <?= htmlspecialchars($category["name"]) ?><br />
+          </div>
+          <p class="card-text">
+            <?= htmlspecialchars($movie["summary"]) ?>
+          </p>
+          <hr />
+          <p class="card-text">
+            Vu :
+            <?= htmlspecialchars($movie["is_watched"] ? 'Oui' : 'Non') ?>
+          </p>
+          <p class="card-text">
+            <?php for ($i = 1; $i <= 5; $i++) { ?>
+              <?= $i <= $movie["rank"] ? '<i class="bi bi-star-fill"></i>' : '<i class="bi bi-star"></i>' ?>
+            <?php } ?>
+            <span>/5</span>
+          </p>
         </div>
-        <p class="card-text">
-          <?= htmlspecialchars($movie["summary"]) ?>
-        </p>
-        <hr />
-        <p class="card-text">
-          Vu :
-          <?= htmlspecialchars($movie["is_watched"] ? 'Oui' : 'Non') ?>
-        </p>
-        <p class="card-text">
-          <?php for ($i = 1; $i <= 5; $i++) { ?>
-            <?= $i <= $movie["rank"] ? '<i class="bi bi-star-fill"></i>' : '<i class="bi bi-star"></i>' ?>
-          <?php } ?>
-          <span>/5</span>
-        </p>
-        <a href="<?= htmlspecialchars($movie["trailer"]) ?>" class="btn btn-primary" target="_blank">Regarder la bande
-          annonce</a>
+        <?php if ($movie["trailer"]) { ?>
+          <div class="card flex-fill" style="width: 50%; height: auto;">
+            <div class="embed-responsive embed-responsive-16by9">
+              <iframe class="embed-responsive-item"
+                src="https://youtube.com/embed/<?= htmlspecialchars($movie_trailer_id) ?>" allowfullscreen></iframe>
+            </div>
+          </div>
+        <?php } ?>
       </div>
     <?php } ?>
 </main>
