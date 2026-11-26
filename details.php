@@ -74,10 +74,14 @@ if (empty($id)) {
             <?= htmlspecialchars($movie["is_watched"] ? 'Oui' : 'Non') ?>
           </p>
           <p class="card-text">
-            <?php for ($i = 1; $i <= 5; $i++) { ?>
-              <?= $i <= $movie["rank"] ? '<i class="bi bi-star-fill"></i>' : '<i class="bi bi-star"></i>' ?>
+            <?php if ($movie['rank'] > 0) { ?>
+              <?php for ($i = 1; $i <= 5; $i++) { ?>
+                <?= $i <= $movie["rank"] ? '<i class="bi bi-star-fill"></i>' : '<i class="bi bi-star"></i>' ?>
+              <?php } ?>
+              <span>/5</span>
+            <?php } else { ?>
+              <span>Aucune note</span>
             <?php } ?>
-            <span>/5</span>
           </p>
         </div>
         <?php if ($movie["trailer"]) { ?>
