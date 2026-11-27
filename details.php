@@ -8,7 +8,7 @@ if (!isset($_SESSION['user'])) {
 }
 $id = $_GET['id'];
 
-if (empty($id)) {
+if (empty($id) || !is_numeric($id)) {
   header('Location: list.php');
   exit;
 } else {
