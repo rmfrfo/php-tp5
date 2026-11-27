@@ -12,6 +12,28 @@ if (empty($id)) {
   header('Location: list.php');
   exit;
 } else {
+  try {
+    if (isset($_POST['save-rank'])) {
+      $rank = filter_var($_POST['rank'] ?? null, FILTER_VALIDATE_INT, [
+        'options' => ['min_range' => 1, 'max_range' => 5]
+      ]);
+      if ($rank === false) {
+        $alertError = "La note doit être un nombre entier entre 1 et 5";
+      } else {
+        $request = $db->prepare('UPDATE movie SET `rank` = ? WHERE id = ?');
+        $request->execute([$rank, $id]);
+        $alertSuccess = 'La note a été enregistrée.';
+      }
+    }
+
+    if (isset($_POST['save-watched'])) {
+      $request = $db->prepare('UPDATE movie SET is_watched = NOT is_watched WHERE id = ?');
+      $request->execute([$id]);
+      $alertSuccess = 'Le statut vu a été mis à jour.';
+    }
+  } catch (PDOException $e) {
+    $alertError = 'Erreur lors de la mise à jour du film : ' . $e->getMessage();
+  }
 
   try {
     $request = $db->prepare('SELECT * FROM movie WHERE id = ?');
@@ -42,6 +64,8 @@ if (empty($id)) {
     $movie_trailer_id = preg_match('~(?:youtu\.be/|youtube?\.com/(?:watch\?v=|embed/|v/|shorts/))([A-Za-z0-9_-]{11})~', $movie['trailer'], $matches)
       ? $matches[1]
       : '';
+
+    $movie_note = (int) $movie['rank'];
   } catch (PDOException $e) {
     $alertError = 'Erreur lors de la récupération du film : ' . $e->getMessage();
   }
@@ -74,9 +98,9 @@ if (empty($id)) {
             <?= htmlspecialchars($movie["is_watched"] ? 'Oui' : 'Non') ?>
           </p>
           <p class="card-text">
-            <?php if ($movie['rank'] > 0) { ?>
+            <?php if ($movie_note > 0) { ?>
               <?php for ($i = 1; $i <= 5; $i++) { ?>
-                <?= $i <= $movie["rank"] ? '<i class="bi bi-star-fill"></i>' : '<i class="bi bi-star"></i>' ?>
+                <?= $i <= $movie_note ? '<i class="bi bi-star-fill"></i>' : '<i class="bi bi-star"></i>' ?>
               <?php } ?>
               <span>/5</span>
             <?php } else { ?>
@@ -93,7 +117,29 @@ if (empty($id)) {
           </div>
         <?php } ?>
       </div>
-    <?php } ?>
+      <div class="card">
+        <form method="POST" action="">
+          <div class="form-group">
+            <label for="rank">Note</label>
+            <select name="rank" id="rank">
+              <?php for ($i = 1; $i <= 5; $i++) { ?>
+                <option value="<?= $i ?>" <?= $i === $movie_note ? 'selected' : '' ?>><?= $i ?></option>
+              <?php } ?>
+            </select>
+            <button type="submit" name="save-rank" class="btn btn-primary">Enregistrer la note</button>
+          </div>
+        </form>
+
+        <form method="POST" action="">
+          <div class="form-group">
+            <button type="submit" name="save-watched" class="btn btn-primary">
+              Marquer comme <?= $movie['is_watched'] ? 'non vu' : 'vu' ?>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  <?php } ?>
 </main>
 <?php
 require_once 'footer.php';
