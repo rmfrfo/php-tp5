@@ -53,19 +53,19 @@ if (empty($id)) {
         if (!$category) {
           $alertError = 'La catégorie de ce film n\'existe pas.';
         }
+
+        $movie_poster = $movie['poster'] ? 'public/picture/' . $movie['poster'] : 'public/default_poster.jpg';
+
+
+        $movie_trailer_id = preg_match('~(?:youtu\.be/|youtube?\.com/(?:watch\?v=|embed/|v/|shorts/))([A-Za-z0-9_-]{11})~', $movie['trailer'], $matches)
+          ? $matches[1]
+          : '';
+
+        $movie_note = (int) $movie['rank'];
       } catch (PDOException $e) {
         $alertError = 'Erreur lors de la récupération de la catégorie : ' . $e->getMessage();
       }
     }
-
-    $movie_poster = $movie['poster'] ? 'public/picture/' . $movie['poster'] : 'public/default_poster.jpg';
-
-
-    $movie_trailer_id = preg_match('~(?:youtu\.be/|youtube?\.com/(?:watch\?v=|embed/|v/|shorts/))([A-Za-z0-9_-]{11})~', $movie['trailer'], $matches)
-      ? $matches[1]
-      : '';
-
-    $movie_note = (int) $movie['rank'];
   } catch (PDOException $e) {
     $alertError = 'Erreur lors de la récupération du film : ' . $e->getMessage();
   }
