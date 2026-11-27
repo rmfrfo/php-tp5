@@ -41,6 +41,17 @@ if (empty($id) || !is_numeric($id)) {
           $movie['is_watched'] = $movie['is_watched'] ? 0 : 1;
           $alertSuccess = 'Le statut vu a été mis à jour.';
         }
+
+        if (isset($_POST['delete-movie'])) {
+          try {
+            $request = $db->prepare('DELETE FROM movie WHERE id = ?');
+            $request->execute([$id]);
+            header('Location: list.php');
+
+          } catch (Exception $e) {
+            $alertError = 'Erreur lors de la suppression du film : ' . $e->getMessage();
+          }
+        }
       } catch (PDOException $e) {
         $alertError = 'Erreur lors de la mise à jour du film : ' . $e->getMessage();
       }
@@ -135,6 +146,14 @@ if (empty($id) || !is_numeric($id)) {
           <div class="form-group">
             <button type="submit" name="save-watched" class="btn btn-primary">
               Marquer comme <?= $movie['is_watched'] ? 'non vu' : 'vu' ?>
+            </button>
+          </div>
+        </form>
+
+        <form method="POST" action="" onsubmit="return confirm('Voulez-vous supprimer ce film ?')">
+          <div class="form-group">
+            <button type="submit" name="delete-movie" class="btn btn-danger">
+              Supprimer le film
             </button>
           </div>
         </form>
