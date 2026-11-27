@@ -13,29 +13,6 @@ if (empty($id)) {
   exit;
 } else {
   try {
-    if (isset($_POST['save-rank'])) {
-      $rank = filter_var($_POST['rank'] ?? null, FILTER_VALIDATE_INT, [
-        'options' => ['min_range' => 1, 'max_range' => 5]
-      ]);
-      if ($rank === false) {
-        $alertError = "La note doit être un nombre entier entre 1 et 5";
-      } else {
-        $request = $db->prepare('UPDATE movie SET `rank` = ? WHERE id = ?');
-        $request->execute([$rank, $id]);
-        $alertSuccess = 'La note a été enregistrée.';
-      }
-    }
-
-    if (isset($_POST['save-watched'])) {
-      $request = $db->prepare('UPDATE movie SET is_watched = NOT is_watched WHERE id = ?');
-      $request->execute([$id]);
-      $alertSuccess = 'Le statut vu a été mis à jour.';
-    }
-  } catch (PDOException $e) {
-    $alertError = 'Erreur lors de la mise à jour du film : ' . $e->getMessage();
-  }
-
-  try {
     $request = $db->prepare('SELECT * FROM movie WHERE id = ?');
     $request->execute([$id]);
     $movie = $request->fetch();
@@ -43,6 +20,30 @@ if (empty($id)) {
     if (!$movie) {
       $alertError = 'Ce film n\'existe pas.';
     } else {
+
+      try {
+        if (isset($_POST['save-rank'])) {
+          $rank = $_POST['rank'] ?? '';
+          if (!in_array($rank, ['1', '2', '3', '4', '5'], true)) {
+            $alertError = "La note doit être un nombre entier entre 1 et 5";
+          } else {
+            $request = $db->prepare('UPDATE movie SET `rank` = ? WHERE id = ?');
+            $rank = (int) $rank;
+            $request->execute([$rank, $id]);
+            $movie['rank'] = $rank;
+            $alertSuccess = 'La note a été enregistrée.';
+          }
+        }
+
+        if (isset($_POST['save-watched'])) {
+          $request = $db->prepare('UPDATE movie SET is_watched = NOT is_watched WHERE id = ?');
+          $request->execute([$id]);
+          $movie['is_watched'] = $movie['is_watched'] ? 0 : 1;
+          $alertSuccess = 'Le statut vu a été mis à jour.';
+        }
+      } catch (PDOException $e) {
+        $alertError = 'Erreur lors de la mise à jour du film : ' . $e->getMessage();
+      }
 
       // Récupérer la catégorie du film
       try {
